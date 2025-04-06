@@ -1,0 +1,82 @@
+@keyframes waiting {
+    100% { content: "wait 00:10 seconds"; }
+     90% { content: "wait 00:09 seconds"; }
+     80% { content: "wait 00:08 seconds"; }
+     70% { content: "wait 00:07 seconds"; }
+     60% { content: "wait 00:06 seconds"; }
+     50% { content: "wait 00:05 seconds"; }
+     40% { content: "wait 00:04 seconds"; }
+     30% { content: "wait 00:03 seconds"; }
+     20% { content: "wait 00:02 seconds"; }
+     10% { content: "wait 00:01 seconds"; }
+      0% { content: "wait 00:00 seconds"; }
+}
+
+/*.........................................................................*/
+
+[message][left] {
+    align-self: flex-start;
+    word-wrap: break-word;
+    padding: 20px;
+}
+
+[message][left] > badge {
+    box-shadow: 0px 0px 10px black;
+    text-transform: capitalize;
+    position: absolute;
+    padding: 2px 10px;
+    font-weight: 600;
+    display: block;
+    left: 10px; 
+    top: -10px;
+}
+
+[message][left] > wait {
+    box-shadow: 0px 0px 10px black;
+    text-transform: capitalize;
+    position: absolute;
+    padding: 2px 10px;
+    font-weight: 600;
+    display: block;
+    bottom: -15px;
+    right:   10px; 
+}
+
+/*.........................................................................*/
+
+[message][right] {
+    word-wrap: break-word;
+    align-self: flex-end;
+    padding: 20px;
+}
+
+[message][right] > badge {
+    box-shadow: 0px 0px 10px black;
+    text-transform: capitalize;
+    position: absolute;
+    padding: 2px 10px;
+    font-weight: 600;
+    display: block;
+    left: 10px; 
+    top: -10px;
+}
+
+[message][right] > wait {
+    box-shadow: 0px 0px 10px black;
+    text-transform: capitalize;
+    position: absolute;
+    padding: 2px 10px;
+    font-weight: 600;
+    display: block;
+    bottom: -15px;
+    right:   10px; 
+}
+
+/*.........................................................................*/
+
+wait::after {
+    animation-direction: reverse;
+    animation-name:      waiting;
+    animation-duration:  10s;
+    content: "✅";
+}

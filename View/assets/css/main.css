@@ -1,0 +1,25 @@
+@keyframes preview {
+    from {
+        transform: perspective(1100px) rotateX(0deg) rotateY(0deg);
+        opacity: 0%;
+    } 
+    to {
+        transform: perspective(1100px) rotateX(10deg) rotateY(-28deg);
+        opacity: 100%;
+    }
+}
+
+[preview] {
+    z-index: -1000;
+    border-radius: 10px;
+    animation-name: preview;
+    animation-duration: 3s;
+    filter: drop-shadow( -100px 0px 100px mediumpurple );
+    transform: perspective(1100px) rotateX(10deg) rotateY(-28deg);
+}
+
+[preview-small] {
+    z-index: -1000;
+    border-radius: 10px;
+    filter: drop-shadow( 0px 0px 100px mediumpurple );
+}
