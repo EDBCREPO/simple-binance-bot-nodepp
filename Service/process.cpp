@@ -11,7 +11,8 @@ using namespace nodepp;
 
 /*────────────────────────────────────────────────────────────────────────────*/
 
-#include "../Controller/user.cpp"
+#include "../Controller/utils.cpp"
+#include "../Controller/price.cpp"
 #include "../Controller/symbol.cpp"
 #include "../Controller/crypto.cpp"
 
@@ -41,8 +42,8 @@ void onMain() { process::env::init(".env");
 
     } catch(...) {}
 
-    controller::analize::user();
-    //controller::analize::crypto();
+    //controller::analize::price();
+    controller::analize::crypto();
     //controller::analize::symbol();
 
 }
