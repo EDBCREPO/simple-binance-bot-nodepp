@@ -2,7 +2,7 @@
 
 /*────────────────────────────────────────────────────────────────────────────*/
 
-#include "mark.cpp"
+#include "analizer.cpp"
 
 /*────────────────────────────────────────────────────────────────────────────*/
 
@@ -45,7 +45,7 @@ namespace controller { namespace analize {
                 _act_[3] = string::to_double( x[0][3].as<string_t>() );
                 _act_[4] = mean({ _act_[0], _act_[1], _act_[2], _act_[3] });
 
-                arg["new"] = array_t<double>( _act_ ); analize_price( item["NAME"], arg );
+                arg["new"] = _act_[4]; analize_price( item["NAME"], arg );
 
             } catch(...) {} *wait-=1;
             }).fail([=]( except_t err ){ *wait-=1; }); *wait+=1;

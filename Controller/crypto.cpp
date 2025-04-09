@@ -53,43 +53,43 @@ namespace controller { namespace analize {
                 auto data = json::parse( stream::await(cli) );
                 auto list = data["data"].as<array_t<object_t>>();
 
-                if ( list.size()<100 ) { throw ""; } for ( auto x: list.slice(50) ) {
-                if ( regex::test( x[1].as<string_t>(), "[.]0{6}" ) ){ throw ""; }
+                if ( list.size()<100 ) { throw ""; } for ( auto x: list.slice(30) ) {
+                if ( regex::test( x[1].as<string_t>(), "[.]0{5}" ) ){ throw ""; }
 
-                   price_t data; memset( &data, 0, sizeof( price_t ) );
-                           data.oprice= string::to_double( x[1].as<string_t>() );
-                           data.hprice= string::to_double( x[2].as<string_t>() );
-                           data.lprice= string::to_double( x[3].as<string_t>() );
-                           data.cprice= string::to_double( x[4].as<string_t>() );
+                   price_t raw; memset( &raw, 0, sizeof( price_t ) );
+                           raw.oprice= string::to_double( x[1].as<string_t>() );
+                           raw.hprice= string::to_double( x[2].as<string_t>() );
+                           raw.lprice= string::to_double( x[3].as<string_t>() );
+                           raw.cprice= string::to_double( x[4].as<string_t>() );
 
-                    _mid_[0] += data.oprice/list.size();
-                    _mid_[1] += data.cprice/list.size();
-                    _mid_[2] += data.hprice/list.size();
-                    _mid_[3] += data.lprice/list.size();
+                    _mid_[0] += raw.oprice/list.size();
+                    _mid_[1] += raw.cprice/list.size();
+                    _mid_[2] += raw.hprice/list.size();
+                    _mid_[3] += raw.lprice/list.size();
                     _mid_[4] = mean({ _mid_[0], _mid_[1], _mid_[2], _mid_[3] });
 
-                    _min_[0] = min( _min_[0], data.oprice );
-                    _min_[1] = min( _min_[1], data.cprice );
-                    _min_[2] = min( _min_[2], data.hprice );
-                    _min_[3] = min( _min_[3], data.lprice );
+                    _min_[0] = min( _min_[0], raw.oprice );
+                    _min_[1] = min( _min_[1], raw.cprice );
+                    _min_[2] = min( _min_[2], raw.hprice );
+                    _min_[3] = min( _min_[3], raw.lprice );
                     _min_[4] = mean({ _min_[0], _min_[1], _min_[2], _min_[3] });
 
-                    _max_[0] = max( _max_[0], data.oprice );
-                    _max_[1] = max( _max_[1], data.cprice );
-                    _max_[2] = max( _max_[2], data.hprice );
-                    _max_[3] = max( _max_[3], data.lprice );
+                    _max_[0] = max( _max_[0], raw.oprice );
+                    _max_[1] = max( _max_[1], raw.cprice );
+                    _max_[2] = max( _max_[2], raw.hprice );
+                    _max_[3] = max( _max_[3], raw.lprice );
                     _max_[4] = mean({ _max_[0], _max_[1], _max_[2], _max_[3] });
 
                 }
 
-                for( auto x=0; x<list.size()-10; x++ ){ double data=0, datb=0;
-                for( auto  &y: list.slice( x, x+10 ) ){
+                for( auto x=0; x<=list.size()-10; x++ ){ double data=0, datb=0;
+                for( auto  &y:  list.slice( x, x+10 ) ){
 
                     price_t raw; memset( &raw, 0, sizeof( price_t ) );
-                           raw.oprice= string::to_double( y[1].as<string_t>() );
-                           raw.hprice= string::to_double( y[2].as<string_t>() );
-                           raw.lprice= string::to_double( y[3].as<string_t>() );
-                           raw.cprice= string::to_double( y[4].as<string_t>() );
+                            raw.oprice= string::to_double( y[1].as<string_t>() );
+                            raw.hprice= string::to_double( y[2].as<string_t>() );
+                            raw.lprice= string::to_double( y[3].as<string_t>() );
+                            raw.cprice= string::to_double( y[4].as<string_t>() );
 
                      double z=( raw.cprice - raw.oprice );
 

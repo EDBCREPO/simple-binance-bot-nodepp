@@ -34,17 +34,17 @@ void onMain() { process::env::init(".env");
             KEY  TEXT            NOT NULL
         ); ));
 
-        db.exec(_STRING_( create TABLE POINT(
-            ID     INTEGER PRIMARY KEY AUTOINCREMENT,
-            SYMBOL TEXT    NOT NULL,
-            ARGS   TEXT    NOT NULL
+        db.exec(_STRING_( CREATE TABLE POINT(
+            ID   INTEGER PRIMARY KEY AUTOINCREMENT,
+            NAME TEXT    NOT NULL,
+            ARGS TEXT    NOT NULL
         ); ));
 
     } catch(...) {}
 
     //controller::analize::price();
-    controller::analize::crypto();
-    //controller::analize::symbol();
+    //controller::analize::crypto();
+    controller::analize::symbol();
 
 }
 
