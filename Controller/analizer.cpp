@@ -4,9 +4,15 @@
 
 namespace controller { namespace analize {
 
-    void buy_crypto( string_t name  ) { console::log( "<<", name ); }
+    void buy_crypto( string_t name  ) {
+        console::log( "<<", name );
+        throw -1;
+    }
 
-    void sell_crypto( string_t name ) { console::log( ">>", name ); }
+    void sell_crypto( string_t name ) {
+        console::log( ">>", name );
+        throw -1;
+    }
 
 }}
 
@@ -16,8 +22,8 @@ namespace controller { namespace analize {
 
     void classifier( string_t name, double _max_, double _min_, double _new_, double _rsi_, object_t& obj ) {
 
-        auto _prv_ = obj["prv"] .as<double>();
-        auto _buy_ = obj["buy"] .as<double>();
+        auto _prv_ = obj["prv"].as<double>();
+        auto _buy_ = obj["buy"].as<double>();
 
         auto _nrm_ = normalizer( _max_, _min_, _new_ );
         auto _mde_ = set_mode( _rsi_, obj["mode"].as<uint>() );
@@ -25,18 +31,22 @@ namespace controller { namespace analize {
 
     try {
 
-        if( _mde_==0 && _nrm_ < -1.0 )                   { sell_crypto( name ); throw ""; }
-        if( _mde_==0 && _gin_ < 90.0 )                   { sell_crypto( name ); throw ""; }
-        if( _mde_==3 && _gin_ < obj["gin"].as<double>() ){ sell_crypto( name ); throw ""; }
+        if( _mde_==BUY_MODE::BUY && _nrm_ < -1.0 )                   { sell_crypto( name ); throw 0; }
+        if( _mde_==BUY_MODE::BUY && _gin_ < 90.0 )                   { sell_crypto( name ); throw 0; }
+        if( _mde_==BUY_MODE::AFS && _gin_ < obj["gin"].as<double>() ){ sell_crypto( name ); throw 0; }
 
-        if( _mde_==1 && _nrm_ < 10.0 )                   { buy_crypto( name ); throw ""; }
-        if( _mde_==3 && _nrm_ < 10.0 )                   { buy_crypto( name ); throw ""; }
+        if( _mde_==BUY_MODE::AFB && _nrm_ < 10.0 )                   { buy_crypto( name );  throw 1; }
+        if( _mde_==BUY_MODE::AFS && _nrm_ < 10.0 )                   { buy_crypto( name );  throw 1; }
 
-    } catch(...) {}
+    } catch( int mode ) {
 
-        obj["gin"] = gain( _new_, obj["prv"].as<double>() );
+        if( mode==0 ){ obj["buy"] = _new_; }
+        if( mode==1 ){ obj["buy"] = type::cast<double>(0.0); }
+
+    }
+
+        obj["gin"] = _gin_; obj["mode"]= _mde_;
         obj["rsi"] = _rsi_; obj["prv"] = _new_;
-        obj["mode"]= _mde_;
 
     }
 
@@ -69,7 +79,7 @@ namespace controller { namespace analize {
 
         } catch(...) {
 
-            uint mode = d<20? 0: d>80? 2: 3;
+            uint mode = set_mode( d, BUY_MODE::AFS );
 
             auto obj = object_t({
                 { "rsi", d }, { "buy", type::cast<double>(0) },

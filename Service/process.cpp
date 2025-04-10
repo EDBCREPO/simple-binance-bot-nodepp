@@ -3,7 +3,6 @@
 #include <nodepp/https.h>
 #include <nodepp/timer.h>
 #include <nodepp/json.h>
-#include <redis/tcp.h>
 
 /*────────────────────────────────────────────────────────────────────────────*/
 
@@ -18,9 +17,10 @@ using namespace nodepp;
 
 /*────────────────────────────────────────────────────────────────────────────*/
 
-void onMain() { process::env::init(".env");
+void onMain() {  process::env::init(".env");
+    sqlite_t db( process::env::get("MODEL") );
 
-    sqlite_t db (process::env::get("MODEL")); try {
+    try {
 
         db.exec(_STRING_( CREATE TABLE TOKENS(
             ID   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,8 +43,8 @@ void onMain() { process::env::init(".env");
     } catch(...) {}
 
     //controller::analize::price();
-    //controller::analize::crypto();
-    controller::analize::symbol();
+    controller::analize::crypto();
+    //controller::analize::symbol();
 
 }
 

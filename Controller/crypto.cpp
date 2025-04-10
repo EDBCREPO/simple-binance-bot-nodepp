@@ -43,7 +43,7 @@ namespace controller { namespace analize {
                     agent.send_timeout = 10000;
 
             https::fetch( args, &ssl, &agent ).then([=]( https_t cli ){
-            try { if( cli.status != 200 ){ throw ""; }
+            try { if( cli.status != 200 ) { throw ""; }
 
                 ptr_t<double> _min_ ( 5, type::cast<double>( (ulong)-1 ) );
                 ptr_t<double> _mid_ ( 5, 0.0 );
@@ -91,10 +91,13 @@ namespace controller { namespace analize {
                             raw.lprice= string::to_double( y[3].as<string_t>() );
                             raw.cprice= string::to_double( y[4].as<string_t>() );
 
-                     double z=( raw.cprice - raw.oprice );
+                     double z =( raw.cprice -raw.oprice ), w = abs(
+                     normalizer( raw.hprice, raw.lprice, raw.cprice ) -
+                     normalizer( raw.hprice, raw.lprice, raw.oprice )
+                     ) / 100.0;
 
-                     if( z<0 ){ datb += string::to_double( y[6].as<string_t>() ) / 8; }
-                     if( z>0 ){ data += string::to_double( y[6].as<string_t>() ) / 8; }
+                     if( z<0 ){ datb += string::to_double( y[6].as<string_t>() )*w / 8; }
+                     else     { data += string::to_double( y[6].as<string_t>() )*w / 8; }
 
                 }
 
@@ -108,10 +111,8 @@ namespace controller { namespace analize {
                 db.exec( regex::format( R"(
                     UPDATE TOKENS SET ARGS='${1}' WHERE NAME='${0}';
                 )", item["NAME"], json::stringify( object_t({
-                    { "max", _max_[4] }, //array_t<double>( _max_ )
-                    { "min", _min_[4] }, //array_t<double>( _min_ )
-                    { "mid", _mid_[4] }, //array_t<double>( _mid_ )
-                    { "rsi", _rsi_[3] }  //array_t<double>( _rsi_ )
+                    { "max", _max_[4] }, { "min", _min_[4] },
+                    { "mid", _mid_[4] }, { "rsi", _rsi_[3] }
                 }) ) ));
 
             } catch(...) {} *wait-=1;
