@@ -18,9 +18,8 @@ using namespace nodepp;
 /*────────────────────────────────────────────────────────────────────────────*/
 
 void onMain() {  process::env::init(".env");
-    sqlite_t db( process::env::get("MODEL") );
 
-    try {
+    try { sqlite_t db( process::env::get("MODEL") );
 
         db.exec(_STRING_( CREATE TABLE TOKENS(
             ID   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,6 +33,10 @@ void onMain() {  process::env::init(".env");
             KEY  TEXT            NOT NULL
         ); ));
 
+    } catch(...) {}
+
+    try { sqlite_t db( process::env::get("POINT") );
+
         db.exec(_STRING_( CREATE TABLE POINT(
             ID   INTEGER PRIMARY KEY AUTOINCREMENT,
             NAME TEXT    NOT NULL,
@@ -42,8 +45,8 @@ void onMain() {  process::env::init(".env");
 
     } catch(...) {}
 
-    //controller::analize::price();
-    controller::analize::crypto();
+    controller::analize::price();
+    //controller::analize::crypto();
     //controller::analize::symbol();
 
 }
