@@ -18,7 +18,7 @@ namespace controller { namespace analize {
                  uri.query  = query_t();
 
                  uri.query["symbol"]      = item["NAME"];
-                 uri.query["granularity"] = "1week";
+                 uri.query["granularity"] = "1M";
                  uri.query["limit"]       = "1";
 
             fetch_t args; ssl_t ssl;
