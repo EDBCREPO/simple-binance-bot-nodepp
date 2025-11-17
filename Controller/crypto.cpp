@@ -33,14 +33,16 @@ namespace controller { namespace analize {
                  uri.query["limit"]       = "100";
                  uri.query["granularity"] = "1M";
 
+            static ptr_t<int> _wait = new int(0);
+
             fetch_t args; ssl_t ssl;
                     args.method = "GET";
                     args.url    = url::format(uri);
 
             agent_t agent;
-                    agent.conn_timeout = 10000;
-                    agent.recv_timeout = 10000;
-                    agent.send_timeout = 10000;
+                    agent.conn_timeout = 1000;
+                    agent.recv_timeout = 1000;
+                    agent.send_timeout = 1000;
 
             https::fetch( args, &ssl, &agent ).then([=]( https_t cli ){
             try { if( cli.status != 200 ) { throw ""; }
@@ -115,12 +117,12 @@ namespace controller { namespace analize {
                     { "mid", _mid_[4] }, { "rsi", _rsi_[3] }
                 }) ) ));
 
-            } catch(...) {} *wait-=1;
-            }).fail([=]( except_t err ){ *wait-=1; }); *wait+=1;
+            } catch(...) {} /*--------*/ *_wait-=1;
+            }).fail([=]( except_t err ){ *_wait-=1; }); *_wait+=1;
 
-           if( *wait<=5 ){ return; }
-        while( *wait>=5 ){ process::next(); }
-        while( *wait!=0 ){ process::next(); } });
+           if( *_wait< 1 ){ return; }
+        while( *_wait>=1 ){ process::next(); }
+        while( *_wait!=0 ){ process::next(); } });
 
     } catch(...) {} timer::timeout([=](){ crypto(); }, TIME_DAYS(1) ); }
 

@@ -52,8 +52,6 @@ namespace controller { namespace analize {
         return ( 100 / a ) * b;
     }
 
-    ptr_t<uint> wait ( new uint(0) );
-
 }}
 
 /*────────────────────────────────────────────────────────────────────────────*/

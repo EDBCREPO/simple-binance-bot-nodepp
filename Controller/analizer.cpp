@@ -4,15 +4,9 @@
 
 namespace controller { namespace analize {
 
-    void buy_crypto( string_t name  ) {
-        console::log( "<<", name );
-        throw -1;
-    }
+    void buy_crypto( string_t name  ) { console::log( "<<", name ); throw -1; }
 
-    void sell_crypto( string_t name ) {
-        console::log( ">>", name );
-        throw -1;
-    }
+    void sell_crypto( string_t name ) { console::log( ">>", name ); throw -1; }
 
 }}
 
@@ -66,29 +60,23 @@ namespace controller { namespace analize {
                e = arg["mid"].as<double>(), c = arg["new"].as<double>(),
                d = arg["rsi"].as<double>();
 
-        if( gain(c,e)<150 || gain(c,e)>500 ) { return; } try {
+        console::log( "->", name );
 
-            console::log("A");
+        if( gain(c,e)<150 || gain(c,e)>500 ) { return; } try {
 
             auto data = db.exec( regex::format( R"(
                 SELECT * FROM POINT WHERE NAME='${0}'
             )", name )); if( data.size()==0 ) { throw ""; }
 
-            console::log("B");
-
             auto obj = json::parse( data[0]["ARGS"] );
             classifier( name, a, b, c, d, obj );
-
-            console::log("C");
 
             db.exec( regex::format( R"(
                 UPDATE POINT SET ARGS='${1}' WHERE NAME='${0}'
             )", name, json::stringify(obj) ));
 
-            console::log("D");
-
         } catch(...) {
-
+            
             uint mode = set_mode( d, BUY_MODE::AFB );
 
             auto obj = object_t({

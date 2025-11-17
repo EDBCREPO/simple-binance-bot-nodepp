@@ -23,27 +23,26 @@ protected:
 
 public:
 
-    template< class T, class U, class V, class Q > coEmit( T& fd, U& res, V& cb, Q& self ){
-    gnStart ; coWait( self->is_used()==1 ); self->use();
+    template< class U, class V, class Q > coEmit( U& ctx, V& cb, Q& self ){
+    coBegin ; coWait( self->is_used()==1 ); self->use();
 
-        num_fields = sqlite3_column_count( res ); for( x=0; x<num_fields; x++ )
-        { col.push(string_t((char*)sqlite3_column_name(res,x))); } coYield(1);
+        num_fields = sqlite3_column_count( ctx ); for( x=0; x<num_fields; x++ )
+        { col.push(string_t((char*)sqlite3_column_name(ctx,x))); }
 
-        coWait( (err=sqlite3_step(res))==SQLITE_BUSY );
-        if( err != SQLITE_ROW ){ coGoto(2); } do {
+        coYield(1); coWait((err=sqlite3_step(ctx)) == SQLITE_BUSY );
+        if( err!=SQLITE_ROW ) { coGoto(2); } do {
 
             auto object = map_t<string_t,string_t>();
 
             for( x=0; x<num_fields; x++ ){
-                 char* y = (char*) sqlite3_column_text(res,x);
-                 object[ col[x] ] = y ? y : "NULL";
+                 auto y=(char*) sqlite3_column_text(ctx,x);
+                 object[col[x]] = y ? y : "NULL";
             }
 
-        cb( object ); }while(0); coTry(1);
-        coYield(2); self->release();
-        sqlite3_finalize(res);
+        cb(object); } while(0); coGoto(1); coYield(2);
+        sqlite3_finalize(ctx); self->release();
 
-    gnStop
+    coFinish
     }
 
 };}}
@@ -96,7 +95,7 @@ public:
             process::error( "SQL Error: ", message );
         }   if( res == NULL ) { return; }
 
-        process::poll::add( task, obj->fd, res, cb, self );
+        process::add( task, res, cb, self );
     }
 
     array_t<sql_item_t> exec( const string_t& cmd ) const { array_t<sql_item_t> arr;
@@ -111,14 +110,16 @@ public:
             process::error( "SQL Error: ", message );
         }   if( res == NULL ) { return nullptr; }
 
-        process::await( task, obj->fd, res, cb, self ); return arr;
+        process::await( task, res, cb, self ); return arr;
     }
 
     /*─······································································─*/
 
-    void use()     const noexcept { if( obj->used==1 ){ return; } obj->used=1; onUse    .emit(); }
-    void release() const noexcept { if( obj->used==0 ){ return; } obj->used=0; onRelease.emit(); }
-    bool is_used() const noexcept { return obj->used; }
+    void use()       const noexcept { if( obj->used==1 ){ return; } obj->used=1; onUse    .emit(); }
+    void release()   const noexcept { if( obj->used==0 ){ return; } obj->used=0; onRelease.emit(); }
+
+    bool is_closed() const noexcept { return obj->state == 0; }
+    bool is_used()   const noexcept { return obj->used; }
 
     /*─······································································─*/
 
